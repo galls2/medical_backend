@@ -1,4 +1,5 @@
 import time
+from random import random
 from threading import Thread
 
 from aiohttp import web
@@ -36,9 +37,12 @@ async def send_hotspots_to_client(db):
     await sio.emit('update_hotspots', hotspot_jsons)
 
 
-def move_forces():
-    # raise NotImplementedError()
-    pass
+def stretch_legs(db, max_dist=0.1):
+    forces = db.get_all_forces()
+    for force in forces:
+        new_long = force.longitude + random.uniform(-max_dist, max_dist)
+        new_lat = force.latitude + random.uniform(-max_dist, max_dist)
+        db.update_force_pos(force.force_id, new_long, new_lat)
 
 
 async def send_update_to_client(db):
@@ -54,7 +58,7 @@ async def background_task(db):
         print('backgroundushim {}'.format(count))
         await send_update_to_client(db)
         #   await sio.emit('update_events', room=sid)
-        move_forces()
+        stretch_legs(db)
         count += 1
 
         await sio.sleep(2)
