@@ -2,7 +2,6 @@
 from database.i_db_comm import IDbComm
 from pojos.event import Event
 from pojos.force import Force
-
 from pojos.event_type import EventType
 from pojos.force_type import ForceType
 import sqlite3
@@ -26,6 +25,11 @@ GET_ALL_OPEN_EVENTS_QUERY = '''SELECT event_id, timestamp, event_name, event_ope
                           event_type_name, num_participants, event_description FROM events
                           LEFT JOIN event_types ON events.event_type_id = event_types.event_type_id
                           WHERE event_open = 1'''
+GET_FORCES_BY_EVENT_ID_QUERY = '''SELECT force_id, force_name, force_latitude, force_longitude, force_type_name, event_name 
+                          FROM forces
+                          LEFT JOIN events ON forces.event_id = events.event_id
+                          LEFT JOIN force_types ON forces.force_type_id = force_types.force_type_id
+                          WHERE forces.event_id = {}'''
 ADD_EVENT_QUERY = '''INSERT INTO events (timestamp, event_name, event_latitude, event_longitude, event_type_id, 
 num_participants, event_description)
 VALUES ('{}', '{}', {}, {}, {}, {}, '{}')'''
@@ -106,6 +110,12 @@ class SqlLiteDbComm(IDbComm):
 
         return forces_list
 
+    def get_forces_by_event_id(self, event_id):
+        records = sql_query_db(GET_FORCES_BY_EVENT_ID_QUERY.format(event_id))
+        forces_list = [Force(*rec) for rec in records]
+
+        return forces_list
+
     def add_event(self, timestamp, name, latitude, longitude, type_id, num_participants, description):
         sql_query_db(
             ADD_EVENT_QUERY.format(timestamp, name, latitude, longitude, type_id, num_participants, description))
@@ -134,10 +144,8 @@ class SqlLiteDbComm(IDbComm):
 
 if __name__ == '__main__':
     db_comm = SqlLiteDbComm()
-    # db_comm.connect_force_to_event(6, 2)
-    # s = sql_query_db('''SELECT force_id, force_name, force_latitude, force_longitude, force_type_id, event_name
-    #                       FROM forces
-    #                       LEFT JOIN events ON forces.event_id = events.event_id''')
+    # db_comm.connect_force_to_event(3, 2)
+    # s = sql_query_db('''''')
     # pprint.pprint(s)
     # db_comm.add_event(time.strftime("%Y-%M-%d %H:%M:%S"), 'פיגוע דקירה בשכם', 10.0, 20.0, 5, 100,
     #                   'פיגוע דקירה בקסבה של שכם')
@@ -147,7 +155,7 @@ if __name__ == '__main__':
     pprint.pprint(events)
     # db_comm.update_force_pos(5, 32.0, 35.0)
     # db_comm.free_force(6)
-    forces = db_comm.get_all_forces()
+    forces = db_comm.get_forces_by_event_id(3)
     pprint.pprint(forces)
 
     event_types = db_comm.get_event_types()
