@@ -5,15 +5,14 @@ import sqlite3
 
 
 class SqlLiteDbComm(IDbComm):
-
     def __init__(self):
         x = 0
 
     def get_all_events(self):
         x = 0
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     con = sqlite3.connect(r".\medical_db.db")
     cur = con.cursor()
     cur.execute('''

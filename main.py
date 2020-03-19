@@ -32,7 +32,6 @@ def get_events():
 
     return events
 
-
 def test():
     gen_events = get_events()
     recognizer = HotSpotRecognizer()
@@ -40,9 +39,11 @@ def test():
     for hotspot in hotspots:
         print(JsonEncoder().encode(hotspot))
 
+
 if __name__ == '__main__':
     db = SqlLiteDbComm()
     print('DB up')
     s = SocketIoCommServer()
     print('Server up')
     test()
+

@@ -5,6 +5,7 @@ sio = socketio.AsyncServer()
 app = web.Application()
 sio.attach(app)
 
+
 class SocketIoCommServer:
     def __init__(self):
         self._clients = []
@@ -36,6 +37,7 @@ class SocketIoCommServer:
         # get ALL events from DB
         # send after calc to HAMAL
         pass
+
 
 #        await sio.emit('reply', room=sid)
 
