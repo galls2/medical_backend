@@ -1,4 +1,5 @@
 
+
 class Force:
     def __init__(self, force_id, name, latitude, longitude, type_id, force_description, event_id):
         self.force_id = event_id
