@@ -20,8 +20,8 @@ GET_ALL_EVENTS_QUERY = '''SELECT event_id, timestamp, event_name, event_open, ev
                           LEFT JOIN event_types ON events.event_type_id = event_types.event_type_id'''
 GET_ALL_FORCES_QUERY = '''SELECT force_id, force_name, force_latitude, force_longitude, force_type_name, event_name 
                           FROM forces
-                          LEFT JOIN force_types ON forces.force_type_id = force_types.force_type_id
-                          LEFT JOIN events ON forces.event_id = events.event_id'''
+                          LEFT JOIN events ON forces.event_id = events.event_id
+                          LEFT JOIN force_types ON forces.force_type_id = force_types.force_type_id'''
 GET_ALL_OPEN_EVENTS_QUERY = '''SELECT event_id, timestamp, event_name, event_open, event_latitude, event_longitude, 
                           event_type_name, num_participants, event_description FROM events
                           LEFT JOIN event_types ON events.event_type_id = event_types.event_type_id
@@ -134,10 +134,18 @@ class SqlLiteDbComm(IDbComm):
 
 if __name__ == '__main__':
     db_comm = SqlLiteDbComm()
-    events = db_comm.get_all_open_events()
+    # db_comm.connect_force_to_event(6, 2)
+    # s = sql_query_db('''SELECT force_id, force_name, force_latitude, force_longitude, force_type_id, event_name
+    #                       FROM forces
+    #                       LEFT JOIN events ON forces.event_id = events.event_id''')
+    # pprint.pprint(s)
+    # db_comm.add_event(time.strftime("%Y-%M-%d %H:%M:%S"), 'פיגוע דקירה בשכם', 10.0, 20.0, 5, 100,
+    #                   'פיגוע דקירה בקסבה של שכם')
+    # db_comm.add_force('רכב מחט', 34.0994, 35.6847, 3)
+    # db_comm.close_event(4)
+    events = db_comm.get_all_events()
     pprint.pprint(events)
     # db_comm.update_force_pos(5, 32.0, 35.0)
-    db_comm.connect_force_to_event(6, 1)
     # db_comm.free_force(6)
     forces = db_comm.get_all_forces()
     pprint.pprint(forces)
