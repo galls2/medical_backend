@@ -5,12 +5,8 @@ import sqlite3
 
 
 class SqlLiteDbComm(IDbComm):
-
     def __init__(self):
-        x = 0
-
-   def get_all_events(self):
-
+        print('gal')
 
 
 if __name__ == '__main__':

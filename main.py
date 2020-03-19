@@ -2,6 +2,7 @@ from json import JSONEncoder
 import random
 
 from ai.hotspot_recognizer import HotSpotRecognizer
+from client_side_communication.socket_io_comm_server import SocketIoCommServer
 from database.sqllite_db_comm import SqlLiteDbComm
 from encoders.json_encoder import JsonEncoder
 from pojos.event import Event
@@ -31,13 +32,18 @@ def get_events():
     # events += generate_cluster(20, 80, SIGMA, 80, SIGMA)
 
     return events
-
-
-if __name__ == '__main__':
-    x = SqlLiteDbComm()
-
+def test():
     gen_events = get_events()
     recognizer = HotSpotRecognizer()
     hotspots = recognizer.recognize_hotspots(gen_events)
     for hotspot in hotspots:
         print(JsonEncoder().encode(hotspot))
+
+
+if __name__ == '__main__':
+    db = SqlLiteDbComm()
+    print('DB up')
+    s = SocketIoCommServer()
+    print('Server up')
+    test()
+
