@@ -1,3 +1,7 @@
+import matplotlib.pyplot as plt
+import numpy
+from sklearn.cluster import MeanShift
+
 from pojos.hotspot import HotSpot
 
 import matplotlib.pyplot as plt

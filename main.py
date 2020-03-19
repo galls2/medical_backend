@@ -1,4 +1,3 @@
-
 from json import JSONEncoder
 import random
 
@@ -14,7 +13,6 @@ def generate_cluster(n_samples, x_mean, x_sigma, y_mean, y_sigma):
     for i in range(n_samples):
         event = Event(0, 0, 0, random.gauss(x_mean, x_sigma), random.gauss(y_mean, y_sigma), 0, 0, 0)
         events.append(event)
-
     return events
 
 
@@ -33,13 +31,14 @@ def get_events():
     # events += generate_cluster(20, 80, SIGMA, 80, SIGMA)
 
     return events
+
+
 def test():
     gen_events = get_events()
     recognizer = HotSpotRecognizer()
     hotspots = recognizer.recognize_hotspots(gen_events)
     for hotspot in hotspots:
         print(JsonEncoder().encode(hotspot))
-
 
 if __name__ == '__main__':
     db = SqlLiteDbComm()
