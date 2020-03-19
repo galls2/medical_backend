@@ -1,3 +1,4 @@
+from pojos.hotspot import HotSpot
 
 import matplotlib.pyplot as plt
 import numpy
@@ -18,5 +19,5 @@ class HotSpotRecognizer:
         plt.scatter([x[0] for x in centers], [x[1] for x in centers])
         plt.show()
 
-        # return []
         return [HotSpot(center[0], center[1], 1) for center in centers]
+
