@@ -12,14 +12,41 @@ app = web.Application()
 sio.attach(app)
 
 
+async def send_events_to_client(db):
+    pass
+
+
+async def send_forces_to_client(db):
+    pass
+
+
+async def send_hotspots_to_client(db):
+    all_events = db.get_all_events()
+    recognizer = HotSpotRecognizer()
+    hotspots = recognizer.recognize_hotspots(all_events)
+    print(JsonEncoder.encode(hotspots[0]))
+    hotspot_jsons = '[' + ' , '.join([JsonEncoder.encode(hotspot) for hotspot in hotspots]) + ']'
+    await sio.emit('reply', hotspot_jsons)
+
+
+def move_forces():
+    raise NotImplementedError()
+
+
+async def send_update_to_client(db):
+    await send_events_to_client(db)
+    await send_forces_to_client(db)
+    await send_hotspots_to_client(db)
+
+
 async def background_task(db):
     count = 0
     print(db)
     while True:
         print('backgroundushim {}'.format(count))
-
-     #   await sio.emit('update_events', room=sid)
-
+        await send_update_to_client(db)
+        #   await sio.emit('update_events', room=sid)
+        move_forces()
         count += 1
 
         await sio.sleep(2)
@@ -51,14 +78,3 @@ class SocketIoCommServer:
         # add to db
         # send message to HAMAL
         pass
-
-    def get_hotspots(self):
-        all_events = self._db.get_all_events()
-        recognizer = HotSpotRecognizer()
-        hotspots = recognizer.recognize_hotspots(all_events)
-        for hotspot in hotspots:
-            print(JsonEncoder().encode(hotspot))
-        return hotspots
-
-#     await sio.emit('reply', room=sid)
-# send after calc to HAMAL

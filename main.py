@@ -10,7 +10,7 @@ from pojos.event import Event
 def generate_cluster(n_samples, x_mean, x_sigma, y_mean, y_sigma):
     events = []
     for i in range(n_samples):
-        event = Event(0, 0, 0, random.gauss(x_mean, x_sigma), random.gauss(y_mean, y_sigma), 0, 0, 0)
+        event = Event(0, 0, 0,0, random.gauss(x_mean, x_sigma), random.gauss(y_mean, y_sigma), 0, 0, 0)
         events.append(event)
     return events
 
@@ -37,13 +37,14 @@ def test_ai():
     hotspots = recognizer.recognize_hotspots(all_events)
     for hotspot in hotspots:
         print(JsonEncoder().encode(hotspot))
+
     return hotspots
 
 
 if __name__ == '__main__':
-    db = SqlLiteDbComm()
-    SocketIoCommServer(db)
+    # db = SqlLiteDbComm()
+    # SocketIoCommServer(db)
     #
     # print('Server up')
-    # test_ai()
+    test_ai()
     print('End')
