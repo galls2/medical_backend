@@ -9,4 +9,3 @@ class Event:
         self.type_id = type_id
         self.num_participants = num_participants
         self.event_description = event_description
-
