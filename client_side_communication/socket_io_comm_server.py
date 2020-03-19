@@ -16,14 +16,15 @@ async def send_events_to_client(db):
     open_events = db.get_all_open_events()
     open_events_jsons = '[' + ' , '.join([JsonEncoder().encode(oevent) for oevent in open_events]) + ']'
     print(open_events_jsons)
-    # await sio.emit('update_hotspots', forces_jsons)
+    await sio.emit('update_hotspots', open_events_jsons)
 
 
 async def send_forces_to_client(db):
     forces = db.get_all_forces()
-    forces_jsons =  '[' + ' , '.join([JsonEncoder().encode(force) for force in forces]) + ']'
+    forces_jsons = '[' + ' , '.join([JsonEncoder().encode(force) for force in forces]) + ']'
     print(forces_jsons)
-    #await sio.emit('update_hotspots', forces_jsons)
+    await sio.emit('update_hotspots', forces_jsons)
+
 
 async def send_hotspots_to_client(db):
     all_events = db.get_all_events()
@@ -32,12 +33,13 @@ async def send_hotspots_to_client(db):
 
     hotspot_jsons = '[' + ' , '.join([JsonEncoder().encode(hotspot) for hotspot in hotspots]) + ']'
     print(hotspot_jsons)
-    #await sio.emit('update_hotspots', hotspot_jsons)
+    await sio.emit('update_hotspots', hotspot_jsons)
 
 
 def move_forces():
-    #raise NotImplementedError()
+    # raise NotImplementedError()
     pass
+
 
 async def send_update_to_client(db):
     await send_events_to_client(db)
@@ -77,11 +79,8 @@ class SocketIoCommServer:
 
     @sio.on('close_event')
     async def close_event(self, event_id):
-        pass
-
+        self._db.close_event(event_id)
 
     @sio.on('new_event')
-    async def new_event(self, event_id):
-        # add to db
-        # send message to HAMAL
-        pass
+    async def new_event(self, timestamp, name, latitude, longitude, type_id, num_participants, description):
+        self._db.add_event(timestamp, name, latitude, longitude, type_id, num_participants, description)
