@@ -71,6 +71,7 @@ def sql_query_db(query):
         return records
 
 
+
 class SqlLiteDbComm(IDbComm):
     def __init__(self):
         pass
