@@ -79,6 +79,7 @@ class SocketIoCommServer:
     async def close_event(self, event_id):
         pass
 
+
     @sio.on('new_event')
     async def new_event(self, event_id):
         # add to db
