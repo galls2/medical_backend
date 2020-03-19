@@ -1,11 +1,9 @@
-
 from aiohttp import web
 import socketio
 
 sio = socketio.AsyncServer()
 app = web.Application()
 sio.attach(app)
-
 
 class SocketIoCommServer:
     def __init__(self):
@@ -40,3 +38,9 @@ class SocketIoCommServer:
         pass
 
 #        await sio.emit('reply', room=sid)
+
+if __name__ == '__main__':
+    s = SocketIoCommServer()
+    while True:
+        x = 0
+        print('gal')
