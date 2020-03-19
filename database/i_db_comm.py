@@ -15,4 +15,10 @@ class IDbComm:
     def get_all_events(self):
         pass
 
+    def get_all_forces(self):
+        pass
+
+    def get_all_open_events(self):
+        pass
+
 

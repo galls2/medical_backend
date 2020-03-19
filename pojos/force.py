@@ -7,5 +7,13 @@ class Force:
         self.type_id = type_id
         self.event_id = event_id
 
+    def __repr__(self):
+        return '''Force Number {}:
+        name: {}
+        location: ({},{})
+        type id: {}
+        event_id: {}'''.format(self.force_id, self.name, self.latitude, self.longitude, self.type_id, self.event_id)
+
+
 
 
