@@ -1,3 +1,5 @@
+import time
+
 import socketio
 
 sio = socketio.Client()
@@ -19,5 +21,8 @@ def disconnect():
     print('disconnected from server')
 
 
-sio.connect('http://localhost:8080')
-sio.wait()
+if __name__ == '__main__':
+    sio.connect('http://localhost:8080')
+    time.sleep(2)
+    print('byte')
+    sio.disconnect()

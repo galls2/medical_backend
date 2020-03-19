@@ -1,3 +1,4 @@
+import threading
 from json import JSONEncoder
 import random
 
@@ -32,18 +33,12 @@ def get_events():
 
     return events
 
-def test():
-    gen_events = get_events()
-    recognizer = HotSpotRecognizer()
-    hotspots = recognizer.recognize_hotspots(gen_events)
-    for hotspot in hotspots:
-        print(JsonEncoder().encode(hotspot))
+
 
 
 if __name__ == '__main__':
     db = SqlLiteDbComm()
-    print('DB up')
-    s = SocketIoCommServer()
-    print('Server up')
-    test()
+    SocketIoCommServer(db)
 
+    print('Server up')
+    print('End')

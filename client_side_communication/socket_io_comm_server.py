@@ -1,16 +1,33 @@
+import time
+from threading import Thread
+
 from aiohttp import web
 import socketio
+
+from ai.hotspot_recognizer import HotSpotRecognizer
+from encoders.json_encoder import JsonEncoder
 
 sio = socketio.AsyncServer()
 app = web.Application()
 sio.attach(app)
 
 
+async def background_task():
+    count = 0
+    print('backgroundushim {}'.format(count))
+
+    while True:
+        await sio.sleep(2)
+        print('backgroundushim {}'.format(count))
+        count += 1
+
+
 class SocketIoCommServer:
-    def __init__(self):
+    def __init__(self, db):
         self._clients = []
+        self._db = db
+        sio.start_background_task(target=background_task, )
         web.run_app(app)
-        print('upupu')
 
     @sio.event
     def connect(sid, environ):
@@ -32,17 +49,13 @@ class SocketIoCommServer:
         # send message to HAMAL
         pass
 
-    @sio.on('get_hotspots')
-    async def get_hotspots(self):
-        # get ALL events from DB
-        # send after calc to HAMAL
-        pass
+    def get_hotspots(self):
+        all_events = self._db.get_all_events()
+        recognizer = HotSpotRecognizer()
+        hotspots = recognizer.recognize_hotspots(all_events)
+        for hotspot in hotspots:
+            print(JsonEncoder().encode(hotspot))
+        return hotspots
 
-
-#        await sio.emit('reply', room=sid)
-
-if __name__ == '__main__':
-    s = SocketIoCommServer()
-    while True:
-        x = 0
-        print('gal')
+#     await sio.emit('reply', room=sid)
+# send after calc to HAMAL
