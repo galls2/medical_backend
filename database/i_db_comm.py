@@ -1,15 +1,16 @@
 
 class IDbComm:
-    def add_force(self, name, lat, lon, force_type_name, event_id=-1):
+
+    def add_event_type(self, event_type_name):
         pass
 
-    def add_event(self, name, lat, lon, event_type_name, num_participants):
+    def add_force_type(self, force_type_name):
         pass
 
-    def add_event_type_id(self, event_type_id, event_type_name):
+    def get_event_types(self):
         pass
 
-    def add_force_type_id(self, force_type_id, force_type_name):
+    def get_force_types(self):
         pass
 
     def get_all_events(self):
@@ -19,6 +20,24 @@ class IDbComm:
         pass
 
     def get_all_open_events(self):
+        pass
+
+    def add_event(self, timestamp, name, latitude, longitude, type_id, num_participants, description):
+        pass
+
+    def add_force(self, name, latitude, longitude, type_id):
+        pass
+
+    def update_force_pos(self, force_id, latitude, longitude):
+        pass
+
+    def close_event(self, event_id):
+        pass
+
+    def connect_force_to_event(self, force_id, event_id):
+        pass
+
+    def free_force(self, force_id):
         pass
 
 
