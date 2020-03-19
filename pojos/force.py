@@ -6,6 +6,3 @@ class Force:
         self.longitude = longitude
         self.type_id = type_id
         self.event_id = event_id
-
-
-

@@ -1,3 +1,4 @@
+
 import matplotlib.pyplot as plt
 import numpy
 from sklearn.cluster import MeanShift
@@ -19,4 +20,3 @@ class HotSpotRecognizer:
 
         # return []
         return [HotSpot(center[0], center[1], 1) for center in centers]
-
