@@ -12,4 +12,6 @@ class IDbComm:
     def add_force_type_id(self, force_type_id, force_type_name):
         pass
 
+    def get_all_events(self):
+        pass
 
