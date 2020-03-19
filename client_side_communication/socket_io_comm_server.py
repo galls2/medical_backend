@@ -12,22 +12,24 @@ app = web.Application()
 sio.attach(app)
 
 
-async def background_task():
+async def background_task(db):
     count = 0
-    print('backgroundushim {}'.format(count))
-
-
+    print(db)
     while True:
-        await sio.sleep(2)
         print('backgroundushim {}'.format(count))
+
+     #   await sio.emit('update_events', room=sid)
+
         count += 1
+
+        await sio.sleep(2)
 
 
 class SocketIoCommServer:
     def __init__(self, db):
         self._clients = []
         self._db = db
-        sio.start_background_task(target=background_task, )
+        sio.start_background_task(background_task, db)
         web.run_app(app)
 
     @sio.event

@@ -1,5 +1,3 @@
-import threading
-from json import JSONEncoder
 import random
 
 from ai.hotspot_recognizer import HotSpotRecognizer
@@ -33,12 +31,19 @@ def get_events():
 
     return events
 
-
+def test_ai():
+    all_events = get_events()
+    recognizer = HotSpotRecognizer()
+    hotspots = recognizer.recognize_hotspots(all_events)
+    for hotspot in hotspots:
+        print(JsonEncoder().encode(hotspot))
+    return hotspots
 
 
 if __name__ == '__main__':
     db = SqlLiteDbComm()
     SocketIoCommServer(db)
-
-    print('Server up')
+    #
+    # print('Server up')
+    # test_ai()
     print('End')
