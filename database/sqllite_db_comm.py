@@ -134,7 +134,7 @@ class SqlLiteDbComm(IDbComm):
 if __name__ == '__main__':
     db_comm = SqlLiteDbComm()
     db_comm.connect_force_to_event(6, 1)
-    s = sql_query_db(GET_ALL_FORCES_QUERY)
+    s = sql_query_db("select * FROM forces")
     pprint.pprint(s)
     # db_comm.add_event(time.strftime("%Y-%M-%d %H:%M:%S"), 'פיגוע דקירה בשכם', 10.0, 20.0, 5, 100,
     #                   'פיגוע דקירה בקסבה של שכם')
@@ -152,5 +152,3 @@ if __name__ == '__main__':
     pprint.pprint(event_types)
     force_types = db_comm.get_force_types()
     pprint.pprint(force_types)
-
-

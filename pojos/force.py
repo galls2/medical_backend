@@ -12,5 +12,5 @@ class Force:
         return '''Force Number {}:
         name: {}
         location: ({},{})
-        type id: {}
-        event_id: {}'''.format(self.force_id, self.name, self.latitude, self.longitude, self.type_name, self.event_name)
+        type: {}
+        event name: {}'''.format(self.force_id, self.name, self.latitude, self.longitude, self.type_name, self.event_name)
