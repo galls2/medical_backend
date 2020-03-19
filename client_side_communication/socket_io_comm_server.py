@@ -1,30 +1,41 @@
-import eventlet
+from aiohttp import web
 import socketio
 
-sio = socketio.Server()
-app = socketio.WSGIApp(sio)
+sio = socketio.AsyncServer()
+app = web.Application()
+sio.attach(app)
 
 
 class SocketIoCommServer:
     def __init__(self):
-        eventlet.wsgi.server(eventlet.listen(('', 5000)), app)
-        print('upupu')
         self._clients = []
+        web.run_app(app)
+        print('upupu')
+
 
     @sio.event
-    def connect(self, env):
-        print('connection established to server')
-        print(env)
+    def connect(sid, environ):
+        print("connect ", sid)
+        print(environ)
+
         # send all info: force locations, active events
 
-    #
-    # @sio.on('close_event')
-    # def close_event(self, event_id):
-    #     pass
-    #
-    # @sio.on('new_event')
-    # def new_event(self, event_id):
-    #     pass
+    @sio.event
+    def disconnect(self):
+        print('disconnect ', self)
+
+    @sio.on('close_event')
+    async def close_event(self, event_id):
+        pass
+
+    @sio.on('new_event')
+    async def new_event(self, event_id):
+        pass
+
+    @sio.event
+    async def chat_message(sid, data):
+        print("message ", data)
+        await sio.emit('reply', room=sid)
 
     '''
     pushes:
@@ -33,9 +44,3 @@ class SocketIoCommServer:
     - In connect i send to HAMAL all data(forces, events ACTIVE)
     '''
 
-
-if __name__ == '__main__':
-    s = SocketIoCommServer()
-    while True:
-        x = 0
-        print('gal')
