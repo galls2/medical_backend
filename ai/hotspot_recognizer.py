@@ -33,7 +33,7 @@ class HotSpotRecognizer:
         plt.scatter([x[0] for x in centers], [x[1] for x in centers])
         plt.xlim(-50, 150)
         plt.ylim(-50, 150)
-        plt.show()
+        # plt.show()
 
-        print(clustering.labels_)
+     #   print(clustering.labels_)
         return [HotSpot(centers[i][0], centers[i][1], radii[i]) for i in range(len(centers))]

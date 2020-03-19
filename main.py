@@ -42,9 +42,9 @@ def test_ai():
 
 
 if __name__ == '__main__':
-    # db = SqlLiteDbComm()
-    # SocketIoCommServer(db)
+     db = SqlLiteDbComm()
+     SocketIoCommServer(db)
     #
     # print('Server up')
-    test_ai()
-    print('End')
+    #   test_ai()
+    #print('End')

@@ -6,13 +6,15 @@ class RamDB(IDbComm):
         self._event_table = []
         self._event_idx = 0
         self._force_table = []
-        self._foce_idx = 0
+        self._force_idx = 0
 
     def add_force(self, name, lat, lon, force_type_name, event_id=-1):
-        self._force_table.append((self._event_idx, name, lat, lon, force_type_name, event_id))
+        self._force_table.append((self._force_idx, name, lat, lon, force_type_name, event_id))
+        self._force_idx += 1
 
     def add_event(self, name, lat, lon, event_type_name, num_participants):
-        pass
+        self._force_table.append((self, self._event_idx, name, lat, lon, event_type_name, num_participants))
+        self._event_idx += 1
 
     def add_event_type_id(self, event_type_id, event_type_name):
         pass

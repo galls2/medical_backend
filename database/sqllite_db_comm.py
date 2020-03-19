@@ -4,7 +4,7 @@ from pojos.event import Event
 from pojos.force import Force
 
 from pojos.event_type import EventType
-from  pojos.force_type import ForceType
+from pojos.force_type import ForceType
 import sqlite3
 import pprint
 import time
@@ -44,32 +44,32 @@ FREE_FORCE_QUERY = '''UPDATE forces
 SET event_id = -1
 WHERE force_id = {}'''
 
+
 def sql_query_db(query):
     try:
         records = None
         con = sqlite3.connect(DB_PATH)
         cur = con.cursor()
-        print("Successfully Connected to SQLite")
+    #    print("Successfully Connected to SQLite")
         cur.execute(query)
 
         records = cur.fetchall()
-        print("results are:", records)
+     #   print("results are:", records)
 
         con.commit()
-        print("SQLite query executed successfully")
+      #  print("SQLite query executed successfully")
 
         cur.close()
 
     except sqlite3.Error as error:
-        print("Error while creating a sqlite table", error)
+        raise Exception("Error while creating a sqlite table", error)
 
     finally:
         if con:
             con.close()
-            print("sqlite connection is closed")
+       #     print("sqlite connection is closed")
 
         return records
-
 
 
 class SqlLiteDbComm(IDbComm):
@@ -80,7 +80,7 @@ class SqlLiteDbComm(IDbComm):
         sql_query_db(ADD_EVENT_TYPE_QUERY.format(event_type_name))
 
     def add_force_type(self, force_type_name):
-        sql_query_db>(ADD_FORCE_TYPE_QUERY.format(force_type_name))
+        sql_query_db > (ADD_FORCE_TYPE_QUERY.format(force_type_name))
 
     def get_event_types(self):
         records = sql_query_db(GET_EVENT_TYPES_QUERY)
@@ -107,7 +107,8 @@ class SqlLiteDbComm(IDbComm):
         return forces_list
 
     def add_event(self, timestamp, name, latitude, longitude, type_id, num_participants, description):
-        sql_query_db(ADD_EVENT_QUERY.format(timestamp, name, latitude, longitude, type_id, num_participants, description))
+        sql_query_db(
+            ADD_EVENT_QUERY.format(timestamp, name, latitude, longitude, type_id, num_participants, description))
 
     def add_force(self, name, latitude, longitude, type_id):
         sql_query_db(ADD_FORCE_QUERY.format(name, latitude, longitude, type_id))
@@ -133,14 +134,7 @@ class SqlLiteDbComm(IDbComm):
 
 if __name__ == '__main__':
     db_comm = SqlLiteDbComm()
-    db_comm.connect_force_to_event(6, 1)
-    s = sql_query_db(GET_ALL_FORCES_QUERY)
-    pprint.pprint(s)
-    # db_comm.add_event(time.strftime("%Y-%M-%d %H:%M:%S"), 'פיגוע דקירה בשכם', 10.0, 20.0, 5, 100,
-    #                   'פיגוע דקירה בקסבה של שכם')
-    # db_comm.add_force('רכב מחט', 34.0994, 35.6847, 3)
-    # db_comm.close_event(4)
-    events = db_comm.get_all_events()
+    events = db_comm.get_all_open_events()
     pprint.pprint(events)
     # db_comm.update_force_pos(5, 32.0, 35.0)
     db_comm.connect_force_to_event(6, 1)
@@ -152,5 +146,3 @@ if __name__ == '__main__':
     pprint.pprint(event_types)
     force_types = db_comm.get_force_types()
     pprint.pprint(force_types)
-
-

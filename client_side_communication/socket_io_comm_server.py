@@ -13,25 +13,31 @@ sio.attach(app)
 
 
 async def send_events_to_client(db):
-    pass
+    open_events = db.get_all_open_events()
+    open_events_jsons = '[' + ' , '.join([JsonEncoder().encode(oevent) for oevent in open_events]) + ']'
+    print(open_events_jsons)
+    # await sio.emit('update_hotspots', forces_jsons)
 
 
 async def send_forces_to_client(db):
-    pass
-
+    forces = db.get_all_forces()
+    forces_jsons =  '[' + ' , '.join([JsonEncoder().encode(force) for force in forces]) + ']'
+    print(forces_jsons)
+    #await sio.emit('update_hotspots', forces_jsons)
 
 async def send_hotspots_to_client(db):
     all_events = db.get_all_events()
     recognizer = HotSpotRecognizer()
     hotspots = recognizer.recognize_hotspots(all_events)
-    print(JsonEncoder.encode(hotspots[0]))
-    hotspot_jsons = '[' + ' , '.join([JsonEncoder.encode(hotspot) for hotspot in hotspots]) + ']'
-    await sio.emit('reply', hotspot_jsons)
+
+    hotspot_jsons = '[' + ' , '.join([JsonEncoder().encode(hotspot) for hotspot in hotspots]) + ']'
+    print(hotspot_jsons)
+    #await sio.emit('update_hotspots', hotspot_jsons)
 
 
 def move_forces():
-    raise NotImplementedError()
-
+    #raise NotImplementedError()
+    pass
 
 async def send_update_to_client(db):
     await send_events_to_client(db)
