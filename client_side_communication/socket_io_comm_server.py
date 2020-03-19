@@ -12,13 +12,11 @@ class SocketIoCommServer:
         web.run_app(app)
         print('upupu')
 
-
     @sio.event
     def connect(sid, environ):
         print("connect ", sid)
         print(environ)
-
-        # send all info: force locations, active events
+        # send all info: force locations, active events, hotspots
 
     @sio.event
     def disconnect(self):
@@ -30,17 +28,14 @@ class SocketIoCommServer:
 
     @sio.on('new_event')
     async def new_event(self, event_id):
+        # add to db
+        # send message to HAMAL
         pass
 
-    @sio.event
-    async def chat_message(sid, data):
-        print("message ", data)
-        await sio.emit('reply', room=sid)
+    @sio.on('get_hotspots')
+    async def get_hotspots(self):
+        # get ALL events from DB
+        # send after calc to HAMAL
+        pass
 
-    '''
-    pushes:
-    - New event to HAMAL. Who takes care.
-    - Hotspots
-    - In connect i send to HAMAL all data(forces, events ACTIVE)
-    '''
-
+#        await sio.emit('reply', room=sid)
