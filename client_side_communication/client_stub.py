@@ -1,3 +1,4 @@
+import asyncio
 import time
 
 import socketio
@@ -30,8 +31,13 @@ def disconnect():
     print('disconnected from server')
 
 
-if __name__ == '__main__':
+async def f():
+    await sio.emit('close_event', 5)
+
+
+async def main():
     sio.connect('http://localhost:8080')
-    time.sleep(2)
-    print('byte')
+    await f()
     sio.disconnect()
+
+asyncio.run(main())

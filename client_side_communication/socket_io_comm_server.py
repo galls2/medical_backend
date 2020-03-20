@@ -7,6 +7,7 @@ import socketio
 from scipy.spatial import distance
 
 from ai.hotspot_recognizer import HotSpotRecognizer
+from database.sqllite_db_comm import SqlLiteDbComm
 from encoders.json_encoder import JsonEncoder
 from pojos.event import Event
 
@@ -19,20 +20,19 @@ async def send_events_to_client(db):
     open_events = db.get_all_open_events()
     forces = db.get_all_forces()
 
-
     events_with_handlers = []
     for oevent in open_events:
         oevent.handlingForces = [force.name for force in forces if force.event_name == oevent.name]
         events_with_handlers.append(oevent)
     open_events_jsons = '[' + ' , '.join([JsonEncoder().encode(oevent) for oevent in events_with_handlers]) + ']'
-    print(open_events_jsons)
+  #  print(open_events_jsons)
     await sio.emit('update_events', open_events_jsons)
 
 
 async def send_forces_to_client(db):
     forces = db.get_all_forces()
     forces_jsons = '[' + ' , '.join([JsonEncoder().encode(force) for force in forces]) + ']'
-    print(forces_jsons)
+   # print(forces_jsons)
     await sio.emit('update_forces', forces_jsons)
 
 
@@ -42,7 +42,7 @@ async def send_hotspots_to_client(db):
     hotspots = recognizer.recognize_hotspots(all_events)
 
     hotspot_jsons = '[' + ' , '.join([JsonEncoder().encode(hotspot) for hotspot in hotspots]) + ']'
-    print(hotspot_jsons)
+    #print(hotspot_jsons)
     await sio.emit('update_hotspots', hotspot_jsons)
 
 
@@ -112,15 +112,18 @@ class SocketIoCommServer:
         print(environ)
 
     @sio.event
-    def disconnect(self):
-        print('disconnect ', self)
+    def disconnect(sid):
+        print('disconnect ', sid)
 
     @sio.on('close_event')
-    async def close_event(self, event_id):
-        self._db.close_event(event_id)
-        force_ids = self._db.get_forces_by_event_id(event_id)
-        [self._db.free_force(force_id) for force_id in force_ids]
+    async def close_event(sid, event_id):
+        print('LALALLALALA I LOVE IT WHEN YOU CALL ME SENIORITA', event_id)
+        db = SqlLiteDbComm()
+        db.close_event(event_id)
+        force_ids = db.get_forces_by_event_id(event_id)
+        [db.free_force(force_id) for force_id in force_ids]
 
     @sio.on('new_event')
-    async def new_event(self, timestamp, name, latitude, longitude, type_id, num_participants, description):
-        self._db.add_event(timestamp, name, latitude, longitude, type_id, num_participants, description)
+    async def new_event(sid, timestamp, name, latitude, longitude, type_id, num_participants, description):
+        db = SqlLiteDbComm()
+        db.add_event(timestamp, name, latitude, longitude, type_id, num_participants, description)
