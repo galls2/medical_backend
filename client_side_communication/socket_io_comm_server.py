@@ -1,5 +1,5 @@
 import time
-from random import random
+import random
 from threading import Thread
 
 from aiohttp import web
@@ -43,13 +43,31 @@ def stretch_legs(db, max_dist=0.1):
     for force in forces:
         new_long = force.longitude + random.uniform(-max_dist, max_dist)
         new_lat = force.latitude + random.uniform(-max_dist, max_dist)
-        db.update_force_pos(force.force_id, new_long, new_lat)
+        db.update_force_pos(force.force_id, new_lat, new_long)
 
 
 async def send_update_to_client(db):
     await send_events_to_client(db)
     await send_forces_to_client(db)
     await send_hotspots_to_client(db)
+
+
+def adopt_orphan_events(db):
+    open_events = db.get_all_open_events()
+    forces = db.get_all_forces()
+    orphan_events = [open_event for open_event in open_events if \
+                     all([force for force in forces if force.event_name != open_event.name])]
+
+    for orphan_event in orphan_events:
+        longitude = orphan_event.longitude
+        latitude = orphan_event.latitude
+
+        available_forces_locations = [(force.longitude, force.latitude) for force in forces if not force.event_name]
+        force_idx_to_send = min([(distance.euclidean(available_forces_locations[f_idx], (longitude, latitude)), f_idx) \
+                                 for f_idx in range(len(available_forces_locations))])[1]
+
+        opt_force_id = forces[force_idx_to_send].force_id
+        db.connect_force_to_event(opt_force_id, orphan_event.event_id)
 
 
 async def background_task(db):
@@ -60,6 +78,7 @@ async def background_task(db):
         await send_update_to_client(db)
         #   await sio.emit('update_events', room=sid)
         stretch_legs(db)
+        adopt_orphan_events(db)
         count += 1
 
         await sio.sleep(2)
@@ -76,7 +95,6 @@ class SocketIoCommServer:
     def connect(sid, environ):
         print("connect ", sid)
         print(environ)
-        # send all info: force locations, active events, hotspots
 
     @sio.event
     def disconnect(self):
@@ -85,15 +103,9 @@ class SocketIoCommServer:
     @sio.on('close_event')
     async def close_event(self, event_id):
         self._db.close_event(event_id)
-        #freeforce
-
+        force_ids = self._db.get_forces_by_event_id(event_id)
+        [self._db.free_force(force_id) for force_id in force_ids]
 
     @sio.on('new_event')
     async def new_event(self, timestamp, name, latitude, longitude, type_id, num_participants, description):
-        # self._db.add_event(timestamp, name, latitude, longitude, type_id, num_participants, description)
-        forces = self._db.get_all_forces()
-        forces_locations = [(force.longitude, force.latitude) for force in forces]
-        force_idx_to_send = min([(distance.euclidean(forces_locations[f_idx], (longitude, latitude)), f_idx) \
-                             for f_idx in range(len(forces_locations))])[1]
-
-        # update event and force in db
+        self._db.add_event(timestamp, name, latitude, longitude, type_id, num_participants, description)

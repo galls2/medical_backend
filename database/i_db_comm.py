@@ -40,3 +40,5 @@ class IDbComm:
     def free_force(self, force_id):
         pass
 
+    def get_forces_by_event_id(self, event_id):
+        pass
