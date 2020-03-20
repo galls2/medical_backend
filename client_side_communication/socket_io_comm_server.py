@@ -4,6 +4,7 @@ from threading import Thread
 
 from aiohttp import web
 import socketio
+from scipy.spatial import distance
 
 from ai.hotspot_recognizer import HotSpotRecognizer
 from encoders.json_encoder import JsonEncoder
@@ -84,7 +85,15 @@ class SocketIoCommServer:
     @sio.on('close_event')
     async def close_event(self, event_id):
         self._db.close_event(event_id)
+        #freeforce
+
 
     @sio.on('new_event')
     async def new_event(self, timestamp, name, latitude, longitude, type_id, num_participants, description):
-        self._db.add_event(timestamp, name, latitude, longitude, type_id, num_participants, description)
+        # self._db.add_event(timestamp, name, latitude, longitude, type_id, num_participants, description)
+        forces = self._db.get_all_forces()
+        forces_locations = [(force.longitude, force.latitude) for force in forces]
+        force_idx_to_send = min([(distance.euclidean(forces_locations[f_idx], (longitude, latitude)), f_idx) \
+                             for f_idx in range(len(forces_locations))])[1]
+
+        # update event and force in db
