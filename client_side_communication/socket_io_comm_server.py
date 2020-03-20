@@ -11,7 +11,7 @@ from database.sqllite_db_comm import SqlLiteDbComm
 from encoders.json_encoder import JsonEncoder
 from pojos.event import Event
 
-sio = socketio.AsyncServer()
+sio = socketio.AsyncServer(cors_allowed_origins="*")
 app = web.Application()
 sio.attach(app)
 
