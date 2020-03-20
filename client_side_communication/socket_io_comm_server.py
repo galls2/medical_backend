@@ -63,6 +63,8 @@ def adopt_orphan_events(db):
         latitude = orphan_event.latitude
 
         available_forces_locations = [(force.longitude, force.latitude) for force in forces if not force.event_name]
+        if len(available_forces_locations) == 0:
+            break
         force_idx_to_send = min([(distance.euclidean(available_forces_locations[f_idx], (longitude, latitude)), f_idx) \
                                  for f_idx in range(len(available_forces_locations))])[1]
 
