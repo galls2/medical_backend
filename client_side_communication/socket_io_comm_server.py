@@ -19,6 +19,7 @@ async def send_events_to_client(db):
     open_events = db.get_all_open_events()
     forces = db.get_all_forces()
 
+
     events_with_handlers = []
     for oevent in open_events:
         oevent.handlingForces = [force.name for force in forces if force.event_name == oevent.name]
