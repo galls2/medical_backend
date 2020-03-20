@@ -11,9 +11,18 @@ def connect():
 
 
 @sio.event
-def my_message(data):
-    print('message received with ', data)
-    sio.emit('my response', {'response': 'my response'})
+def update_events(data):
+    print('events received with ', data)
+
+
+@sio.event
+def update_forces(data):
+    print('forces received with ', data)
+
+
+@sio.event
+def update_hotspots(data):
+    print('hotspots received with ', data)
 
 
 @sio.event

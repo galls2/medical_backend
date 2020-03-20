@@ -18,14 +18,14 @@ async def send_events_to_client(db):
     open_events = db.get_all_open_events()
     open_events_jsons = '[' + ' , '.join([JsonEncoder().encode(oevent) for oevent in open_events]) + ']'
     print(open_events_jsons)
-    await sio.emit('update_hotspots', open_events_jsons)
+    await sio.emit('update_events', open_events_jsons)
 
 
 async def send_forces_to_client(db):
     forces = db.get_all_forces()
     forces_jsons = '[' + ' , '.join([JsonEncoder().encode(force) for force in forces]) + ']'
     print(forces_jsons)
-    await sio.emit('update_hotspots', forces_jsons)
+    await sio.emit('update_forces', forces_jsons)
 
 
 async def send_hotspots_to_client(db):
