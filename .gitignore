@@ -5,7 +5,7 @@ __pycache__/
 
 # no db files
 
-*.db
+
 # C extensions
 *.so
 
