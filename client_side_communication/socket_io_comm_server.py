@@ -65,7 +65,7 @@ def adopt_orphan_events(db):
 
     forces = db.get_all_forces()
     orphan_events = [open_event for open_event in open_events if \
-                     all([force for force in forces if force.event_name != open_event.name])]
+                     all([force.event_name != open_event.name for force in forces])]
 
     for orphan_event in orphan_events:
 
@@ -120,8 +120,8 @@ class SocketIoCommServer:
         print('LALALLALALA I LOVE IT WHEN YOU CALL ME SENIORITA', event_id)
         db = SqlLiteDbComm()
         db.close_event(event_id)
-        force_ids = db.get_forces_by_event_id(event_id)
-        [db.free_force(force_id) for force_id in force_ids]
+        forces = db.get_forces_by_event_id(event_id)
+        [db.free_force(force.force_id) for force in forces]
 
     @sio.on('new_event')
     async def new_event(sid, timestamp, name, latitude, longitude, type_name, num_participants, description):
