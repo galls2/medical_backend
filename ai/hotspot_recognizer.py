@@ -19,14 +19,14 @@ class HotSpotRecognizer:
         clustering = algo.fit(data)
         centers = clustering.cluster_centers_
 
-        print(clustering.cluster_centers_)
-        fig, ax = plt.subplots()
+   #     print(clustering.cluster_centers_)
+   #     fig, ax = plt.subplots()
 
         labels = clustering.labels_
         radii = [get_radius(data, labels, i, centers[i]) for i in range(len(centers))]
-        for i in range(len(centers)):
-            circush = plt.Circle((centers[i][0], centers[i][1]), radii[i], color="red", fill=False)
-            ax.add_artist(circush)
+     #   for i in range(len(centers)):
+     #       circush = plt.Circle((centers[i][0], centers[i][1]), radii[i], color="red", fill=False)
+    #        ax.add_artist(circush)
 
        # plt.scatter([x[0] for x in data], [x[1] for x in data])
 

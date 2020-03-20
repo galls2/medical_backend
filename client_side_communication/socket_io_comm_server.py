@@ -8,6 +8,7 @@ from scipy.spatial import distance
 
 from ai.hotspot_recognizer import HotSpotRecognizer
 from encoders.json_encoder import JsonEncoder
+from pojos.event import Event
 
 sio = socketio.AsyncServer()
 app = web.Application()
@@ -16,7 +17,13 @@ sio.attach(app)
 
 async def send_events_to_client(db):
     open_events = db.get_all_open_events()
-    open_events_jsons = '[' + ' , '.join([JsonEncoder().encode(oevent) for oevent in open_events]) + ']'
+    forces = db.get_all_forces()
+
+    events_with_handlers = []
+    for oevent in open_events:
+        oevent.handlingForces = [force.name for force in forces if force.event_name == oevent.name]
+        events_with_handlers.append(oevent)
+    open_events_jsons = '[' + ' , '.join([JsonEncoder().encode(oevent) for oevent in events_with_handlers]) + ']'
     print(open_events_jsons)
     await sio.emit('update_events', open_events_jsons)
 
@@ -38,7 +45,7 @@ async def send_hotspots_to_client(db):
     await sio.emit('update_hotspots', hotspot_jsons)
 
 
-def stretch_legs(db, max_dist=0.1):
+def stretch_legs(db, max_dist=0.01):
     forces = db.get_all_forces()
     for force in forces:
         new_long = force.longitude + random.uniform(-max_dist, max_dist)
@@ -54,22 +61,27 @@ async def send_update_to_client(db):
 
 def adopt_orphan_events(db):
     open_events = db.get_all_open_events()
+
     forces = db.get_all_forces()
     orphan_events = [open_event for open_event in open_events if \
                      all([force for force in forces if force.event_name != open_event.name])]
 
     for orphan_event in orphan_events:
+
         longitude = orphan_event.longitude
         latitude = orphan_event.latitude
 
-        available_forces_locations = [(force.longitude, force.latitude) for force in forces if not force.event_name]
+        available_forces = [force for force in forces if not force.event_name]
+        available_forces_locations = [(force.longitude, force.latitude) for force in available_forces]
         if len(available_forces_locations) == 0:
             break
+
         force_idx_to_send = min([(distance.euclidean(available_forces_locations[f_idx], (longitude, latitude)), f_idx) \
                                  for f_idx in range(len(available_forces_locations))])[1]
-
-        opt_force_id = forces[force_idx_to_send].force_id
+        opt_force_id = available_forces[force_idx_to_send].force_id
+        #    print('>>>>>>Connecting force {} to event {}'.format(opt_force_id, orphan_event.event_id))
         db.connect_force_to_event(opt_force_id, orphan_event.event_id)
+        forces = db.get_all_forces()
 
 
 async def background_task(db):
