@@ -25,14 +25,14 @@ async def send_events_to_client(db):
         oevent.handlingForces = [force.name for force in forces if force.event_name == oevent.name]
         events_with_handlers.append(oevent)
     open_events_jsons = '[' + ' , '.join([JsonEncoder().encode(oevent) for oevent in events_with_handlers]) + ']'
-  #  print(open_events_jsons)
+    #  print(open_events_jsons)
     await sio.emit('update_events', open_events_jsons)
 
 
 async def send_forces_to_client(db):
     forces = db.get_all_forces()
     forces_jsons = '[' + ' , '.join([JsonEncoder().encode(force) for force in forces]) + ']'
-   # print(forces_jsons)
+    # print(forces_jsons)
     await sio.emit('update_forces', forces_jsons)
 
 
@@ -42,7 +42,7 @@ async def send_hotspots_to_client(db):
     hotspots = recognizer.recognize_hotspots(all_events)
 
     hotspot_jsons = '[' + ' , '.join([JsonEncoder().encode(hotspot) for hotspot in hotspots]) + ']'
-    #print(hotspot_jsons)
+    # print(hotspot_jsons)
     await sio.emit('update_hotspots', hotspot_jsons)
 
 
@@ -124,6 +124,8 @@ class SocketIoCommServer:
         [db.free_force(force_id) for force_id in force_ids]
 
     @sio.on('new_event')
-    async def new_event(sid, timestamp, name, latitude, longitude, type_id, num_participants, description):
+    async def new_event(sid, timestamp, name, latitude, longitude, type_name, num_participants, description):
         db = SqlLiteDbComm()
-        db.add_event(timestamp, name, latitude, longitude, type_id, num_participants, description)
+        event_types = db.get_event_types()
+        rel_types = [etype.event_type_id for etype in event_types if etype.event_type_name == type_name]
+        db.add_event(timestamp, name, latitude, longitude, rel_types[0], num_participants, description)
